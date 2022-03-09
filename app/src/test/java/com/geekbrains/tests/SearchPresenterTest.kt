@@ -1,5 +1,7 @@
 package com.geekbrains.tests
 
+import android.os.Build
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.geekbrains.tests.model.SearchResponse
 import com.geekbrains.tests.model.SearchResult
 import com.geekbrains.tests.presenter.search.SearchPresenter
@@ -8,12 +10,13 @@ import com.geekbrains.tests.view.search.ViewSearchContract
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.Mockito.*
 import org.mockito.MockitoAnnotations
+import org.robolectric.annotation.Config
 import retrofit2.Response
 
-//Тестируем наш Презентер
 class SearchPresenterTest {
 
     private lateinit var presenter: SearchPresenter
@@ -26,12 +29,27 @@ class SearchPresenterTest {
 
     @Before
     fun setUp() {
-        //Обязательно для аннотаций "@Mock"
-        //Раньше было @RunWith(MockitoJUnitRunner.class) в аннотации к самому классу (SearchPresenterTest)
-        MockitoAnnotations.initMocks(this)
-        //Создаем Презентер, используя моки Репозитория и Вью, проинициализированные строкой выше
-        presenter = SearchPresenter(viewContract, repository)
+        MockitoAnnotations.openMocks(this)
+        presenter = SearchPresenter(repository)
+        presenter.onAttach(viewContract)
     }
+
+    @Test
+    fun onAttach_ViewInit_NotNull_Test() {
+        assertNotNull(presenter.viewContract)
+    }
+
+    @Test
+    fun onAttach_ViewInit_Completed_Test() {
+        assertEquals(viewContract, presenter.viewContract)
+    }
+
+    @Test
+    fun onDetach_Completed_Test() {
+        presenter.onDetach()
+        assertNull(presenter.viewContract)
+    }
+
 
     @Test //Проверим вызов метода searchGitHub() у нашего Репозитория
     fun searchGitHub_Test() {
