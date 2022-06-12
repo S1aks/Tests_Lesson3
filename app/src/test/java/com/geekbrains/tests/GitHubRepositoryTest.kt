@@ -1,5 +1,7 @@
 package com.geekbrains.tests
 
+import android.os.Build
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.geekbrains.tests.model.SearchResponse
 import com.geekbrains.tests.repository.GitHubApi
 import com.geekbrains.tests.repository.GitHubRepository
@@ -8,13 +10,17 @@ import okhttp3.Request
 import okio.Timeout
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.Mockito.*
 import org.mockito.MockitoAnnotations
+import org.robolectric.annotation.Config
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
+@RunWith(AndroidJUnit4::class)
+@Config(sdk = [Build.VERSION_CODES.O_MR1])
 class GitHubRepositoryTest {
 
     private lateinit var repository: GitHubRepository
@@ -24,7 +30,7 @@ class GitHubRepositoryTest {
 
     @Before
     fun setUp() {
-        MockitoAnnotations.initMocks(this)
+        MockitoAnnotations.openMocks(this)
         repository = GitHubRepository(gitHubApi)
     }
 
